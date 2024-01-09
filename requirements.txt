@@ -3,3 +3,4 @@ setuptools
 diffusers
 torch
 transformers
+accelerate
