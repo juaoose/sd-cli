@@ -1,7 +1,9 @@
 import click
 import base64
 from diffusers import DiffusionPipeline
+
 from PIL import Image
+import io
 
 @click.command
 @click.option('--sentence', default='a cute cat', help='Sentence you want to use for text-to-image')
@@ -10,15 +12,15 @@ def hello(sentence):
 
   pipeline = DiffusionPipeline.from_pretrained("./model")
   image = pipeline(sentence).images[0]
-  # b64_image = base64.b64encode(image.tobytes()).decode('utf-8')
+  image.save("result.png")
+  
+  with open("result.png", 'rb') as file:
+    file_content = file.read()
+    b64 = base64.b64encode(file_content).decode('utf-8')
+    click.echo(b64)
 
-  pil_image = Image.fromarray(image)
-
-  # Convert the PIL Image to a base64-encoded string
-  with BytesIO() as buffer:
-    pil_image.save(buffer, format="JPEG")  # Change the format as needed
-    base64_encoded = base64.b64encode(buffer.getvalue()).decode('utf-8')
-    click.echo(base64_encoded)
+    with open("convert.txt", "w") as text:
+      text.write(b64)
 
 
 if __name__ == '__main__':
